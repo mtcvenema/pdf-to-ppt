@@ -31,15 +31,17 @@ for i in range(l):
 prs = Presentation()
 # The width and height below correspond to 16:9 ratio
 # For 4:3 ratio, you may want to use 10 and 7.5
-prs.slide_width = Inches(10)
-prs.slide_height = Inches(5.625)
+set_width = 10
+set_height = 5.625
+prs.slide_width = Inches(set_width)
+prs.slide_height = Inches(set_height)
 for i in range(l):
     # print("converting slide" + str(i+1) + " now")
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     img_path = 'slide'+ str(i+1) +'.png'
     left = Inches(0)
     top = Inches(0)
-    height = Inches(5.625)
+    height = Inches(set_height)
     pic = slide.shapes.add_picture(img_path, left, top, height=height)
     
 prs.save(ppt_name)
