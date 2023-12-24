@@ -27,8 +27,11 @@ args = parser.parse_args()
 # Get PDF input file name from args and check if file exists
 pdf_name = args.input
 if not os.path.exists(pdf_name):
-    print("The specified PDF input file does not exist.")
-    exit()
+    # Additionally check if only the file extension was missing
+    pdf_name += ".pdf"
+    if not os.path.exists(pdf_name):
+        print("The specified PDF input file does not exist.")
+        exit()
 
 # Get PPT output file name from args
 ppt_name = args.output
