@@ -5,40 +5,41 @@ Created on Thu Sep 14 16:11:31 2023
 @author: Marloes Venema
 """
 
-# import modules
 from pdf2image import convert_from_path
 from pptx import Presentation
 from pptx.util import Inches
+import os
+import io
+import math
 
 # Change the pdf and ppt names accordingly
 pdf_name = "test.pdf"
 ppt_name = "test.pptx"
 
-# Store Pdf with convert_from_path function
-images = convert_from_path(pdf_name, 1000)
+# Use half of the available cores for conversion
+conversion_cores = math.ceil(os.cpu_count() / 2)
 
-l = len(images)
+# Convert PDF with to high-res PNGs
+images = convert_from_path(pdf_name, dpi=1000, fmt='png', thread_count=conversion_cores)
 
-for i in range(l):
+# Determine aspect ratio of PDF presentation
+ratio = images[0].width / float(images[0].height)
+width = 10
+height = width / ratio
 
- 	# Save pages as images in the pdf
-    images[i].save('slide'+ str(i+1) +'.png', 'PNG')
-    
-# Now convert to presentation
+# Set up PPT presentation
 prs = Presentation()
-# The width and height below correspond to 16:9 ratio
-# For 4:3 ratio, you may want to use 10 and 7.5
-set_width = 10
-set_height = 5.625
-prs.slide_width = Inches(set_width)
-prs.slide_height = Inches(set_height)
-for i in range(l):
-    # print("converting slide" + str(i+1) + " now")
+prs.slide_width = Inches(width)
+prs.slide_height = Inches(height)
+
+# Add new slide for each PNG image
+for img in images:
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    img_path = 'slide'+ str(i+1) +'.png'
-    left = Inches(0)
-    top = Inches(0)
-    height = Inches(set_height)
-    pic = slide.shapes.add_picture(img_path, left, top, height=height)
+
+    # Convert image object to virtual file object
+    tmpFile = io.BytesIO()
+    img.save(tmpFile, "PNG")
+
+    slide.shapes.add_picture(tmpFile, 0, 0, height=Inches(height))
     
 prs.save(ppt_name)
