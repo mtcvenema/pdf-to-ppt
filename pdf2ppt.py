@@ -7,10 +7,7 @@ Created on Thu Sep 14 16:11:31 2023
 
 # import modules
 from pdf2image import convert_from_path
-import collections 
-import collections.abc
 from pptx import Presentation
-import os
 from pptx.util import Inches
 
 # Change the pdf and ppt names accordingly
@@ -45,4 +42,3 @@ for i in range(l):
     pic = slide.shapes.add_picture(img_path, left, top, height=height)
     
 prs.save(ppt_name)
-os.startfile(ppt_name)
